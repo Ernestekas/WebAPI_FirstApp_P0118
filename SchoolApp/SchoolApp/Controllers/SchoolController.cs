@@ -36,13 +36,6 @@ namespace SchoolApp.Controllers
         [HttpPost]
         public void Add(SchoolDto schoolDto)
         {
-            TryValidateModel(schoolDto);
-
-            if (!ModelState.IsValid)
-            {
-                RedirectToAction(nameof(Error));
-            }
-
             _schoolService.Create(schoolDto.SchoolName);
         }
 
@@ -56,12 +49,6 @@ namespace SchoolApp.Controllers
         public void Delete(int id)
         {
             _schoolService.Remove(id);
-        }
-
-        [HttpGet]
-        public void Error()
-        {
-            throw new System.Web.Http.HttpResponseException(System.Net.HttpStatusCode.NotAcceptable);
         }
     }
 }
