@@ -100,7 +100,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Remove(int id)
         {
             try
             {
@@ -111,18 +111,12 @@ namespace SchoolApp.Controllers
             {
                 ErrorModel errorModel = new ErrorModel()
                 {
-                    Message = "Validation Failed",
+                    Message = "Deletion Failed",
                     Errors = ex.Message
                 };
 
-                return BadRequest("Delete Failed");
+                return BadRequest(errorModel);
             }
-        }
-
-        [HttpGet("School/Error")]
-        public IActionResult Error(ErrorModel errorModel)
-        {
-            return NotFound(errorModel);
         }
     }
 }

@@ -86,6 +86,12 @@ namespace SchoolApp.Services
             _schoolRepository.Remove(id);
         }
 
+        public void TryValidateById(int id)
+        {
+            School school = _schoolRepository.GetById(id);
+            TryValidateSchool(school, "There is no school with this Id.");
+        }
+
         private List<StudentDto> ParseToDto(List<Student> students)
         {
             List<StudentDto> studentDtos = new List<StudentDto>();

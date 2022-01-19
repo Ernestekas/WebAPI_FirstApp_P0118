@@ -15,16 +15,47 @@ namespace SchoolApp.Controllers
     public class StudentController : ControllerBase
     {
         private readonly StudentService _studentService;
+        private readonly SchoolService _schoolService;
 
-        public StudentController(StudentService studentService)
+        public StudentController(StudentService studentService, SchoolService schoolService)
         {
             _studentService = studentService;
+            _schoolService = schoolService;
         }
 
         [HttpPost]
-        public void Create(StudentDto newStudent)
+        public IActionResult Create(StudentDto newStudent)
         {
-            _studentService.Create(newStudent);
+            TryValidateModel(new Student() { Name = newStudent.StudentName });
+            if (!ModelState.IsValid)
+            {
+                ErrorModel errorModel = new ErrorModel()
+                {
+                    Message = "Validation Failed",
+                    Errors = string.Join("; ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage))
+                };
+
+                return BadRequest(errorModel);
+            }
+
+            try
+            {
+                _schoolService.TryValidateById(newStudent.SchoolId);
+
+                int studentId = _studentService.Create(newStudent);
+
+                return Ok($"~/Student/{studentId}");
+            }
+            catch (Exception ex)
+            {
+                ErrorModel errorModel = new ErrorModel()
+                {
+                    Message = "Creation Failed",
+                    Errors = ex.Message
+                };
+
+                return NotFound(errorModel);
+            }
         }
 
         [HttpGet]
@@ -34,21 +65,71 @@ namespace SchoolApp.Controllers
         }
 
         [HttpGet("{id}")]
-        public StudentDto GetById(int id)
+        public IActionResult GetById(int id)
         {
-            return _studentService.GetById(id);
+            try
+            {
+                StudentDto studentDto = _studentService.GetById(id);
+                return Ok(studentDto);
+            }
+            catch (Exception ex)
+            {
+                ErrorModel errorModel = new ErrorModel()
+                {
+                    Message = "Selection Failed",
+                    Errors = ex.Message
+                };
+                return NotFound(errorModel);
+            }
         }
 
         [HttpDelete("{id}")]
-        public void Remove(int id)
+        public IActionResult Remove(int id)
         {
-            _studentService.Remove(id);
+            try
+            {
+                _studentService.Remove(id);
+                return Ok("Student Removed");
+            }
+            catch (Exception ex)
+            {
+                ErrorModel errorModel = new ErrorModel()
+                {
+                    Message = "Deletion Failed",
+                    Errors = ex.Message
+                };
+                return BadRequest(errorModel);
+            }
         }
 
         [HttpPut("{id}")]
-        public void Update(int id, [FromBody] StudentDto studentDto)
+        public IActionResult Update(int id, [FromBody] StudentDto studentDto)
         {
-            _studentService.Update(id, studentDto);
+            TryValidateModel(new Student() { Name = studentDto.StudentName });
+            if (!ModelState.IsValid)
+            {
+                ErrorModel errorModel = new ErrorModel()
+                {
+                    Message = "Validation Failed",
+                    Errors = string.Join("; ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage))
+                };
+                return BadRequest(errorModel);
+            }
+
+            try
+            {
+                _studentService.Update(id, studentDto);
+                return Ok("Student Data Updated");
+            }
+            catch (Exception ex)
+            {
+                ErrorModel errorModel = new ErrorModel()
+                {
+                    Message = "Update Failed",
+                    Errors = ex.Message
+                };
+                return BadRequest(errorModel);
+            }
         }
     }
 }

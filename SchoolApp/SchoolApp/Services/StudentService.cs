@@ -12,13 +12,15 @@ namespace SchoolApp.Services
     public class StudentService
     {
         private StudentRepository _studentRepository;
+        private SchoolService _schoolService;
 
-        public StudentService(StudentRepository studentRepository)
+        public StudentService(StudentRepository studentRepository, SchoolService schoolService)
         {
             _studentRepository = studentRepository;
+            _schoolService = schoolService;
         }
 
-        public void Create(StudentDto newStudent)
+        public int Create(StudentDto newStudent)
         {
             Student student = new Student()
             {
@@ -27,14 +29,19 @@ namespace SchoolApp.Services
                 SchoolId = newStudent.SchoolId
             };
 
-            _studentRepository.Create(student);
+            return _studentRepository.Create(student);
         }
 
         public void Update(int id, StudentDto studentDto)
         {
             Student student = _studentRepository.GetById(id);
+
+            TryValidateStudent(student, "There is no student with this Id");
+
             student.Name = studentDto.StudentName;
             student.SchoolId = studentDto.SchoolId;
+
+            _schoolService.TryValidateById(student.SchoolId);
 
             _studentRepository.Update(student);
         }
@@ -61,6 +68,9 @@ namespace SchoolApp.Services
         public StudentDto GetById(int id)
         {
             Student student = _studentRepository.GetById(id);
+
+            TryValidateStudent(student, "There is no student with this Id");
+            
             return new StudentDto()
             {
                 StudentName = student.Name,
@@ -71,7 +81,19 @@ namespace SchoolApp.Services
 
         public void Remove(int id)
         {
+            Student student = _studentRepository.GetById(id);
+
+            TryValidateStudent(student, "There is no such student with this Id");
+
             _studentRepository.Remove(id);
+        }
+
+        private void TryValidateStudent(Student student, string errorMessage)
+        {
+            if(student == null)
+            {
+                throw new Exception(errorMessage);
+            }
         }
     }
 }
