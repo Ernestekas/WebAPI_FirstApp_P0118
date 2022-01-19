@@ -20,7 +20,7 @@ namespace SchoolApp.Services
             _studentRepository = studentRepository;
         }
 
-        public void Create(string name)
+        public int Create(string name)
         {
             School newSchool = new School()
             {
@@ -28,7 +28,7 @@ namespace SchoolApp.Services
                 Created = DateTime.Now,
             };
 
-            _schoolRepository.Create(newSchool);
+            return _schoolRepository.Create(newSchool);
         }
 
         public List<SchoolDto> GetAll()
@@ -55,6 +55,8 @@ namespace SchoolApp.Services
         {
             School school = _schoolRepository.GetByIdIncluded(id);
 
+            TryValidateSchool(school, "No school was found.");
+
             SchoolDto schoolDto = new SchoolDto()
             {
                 SchoolName= school.Name,
@@ -68,13 +70,19 @@ namespace SchoolApp.Services
         public void Update(int id, string newName)
         {
             School school = _schoolRepository.GetById(id);
-            school.Name = newName;
 
+            TryValidateSchool(school, "There is no school with this Id.");
+
+            school.Name = newName;
             _schoolRepository.Update(school);
         }
 
         public void Remove(int id)
         {
+            School school = _schoolRepository.GetById(id);
+
+            TryValidateSchool(school, "There is no school with this Id.");
+
             _schoolRepository.Remove(id);
         }
 
@@ -94,6 +102,14 @@ namespace SchoolApp.Services
             }
 
             return studentDtos;
+        }
+
+        private void TryValidateSchool(School school, string errorMessage)
+        {
+            if(school == null)
+            {
+                throw new Exception(errorMessage);
+            }
         }
     }
 }
