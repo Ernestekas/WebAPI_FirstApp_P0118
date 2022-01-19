@@ -1,4 +1,5 @@
-﻿using SchoolApp.Models;
+﻿using SchoolApp.Dtos;
+using SchoolApp.Models;
 using SchoolApp.Repositories;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,12 @@ namespace SchoolApp.Services
     public class SchoolService
     {
         private SchoolRepository _schoolRepository;
+        private StudentRepository _studentRepository;
 
-        public SchoolService(SchoolRepository schoolRepository)
+        public SchoolService(SchoolRepository schoolRepository, StudentRepository studentRepository)
         {
             _schoolRepository = schoolRepository;
+            _studentRepository = studentRepository;
         }
 
         public void Create(string name)
@@ -28,14 +31,38 @@ namespace SchoolApp.Services
             _schoolRepository.Create(newSchool);
         }
 
-        public List<School> GetAll()
+        public List<SchoolDto> GetAll()
         {
-            return _schoolRepository.GetAll();
+            List<SchoolDto> schoolDtos = new List<SchoolDto>();
+            List<School> schools = _schoolRepository.GetAllIncluded();
+            
+            foreach(var school in schools)
+            {
+                SchoolDto schoolDto = new SchoolDto()
+                {
+                    SchoolName = school.Name,
+                    SchoolCreated = school.Created,
+                    Students = ParseToDto(school.Students)
+                };
+
+                schoolDtos.Add(schoolDto);
+            }
+
+            return schoolDtos;
         }
 
-        public School GetById(int id)
+        public SchoolDto GetById(int id)
         {
-            return _schoolRepository.GetById(id);
+            School school = _schoolRepository.GetByIdIncluded(id);
+
+            SchoolDto schoolDto = new SchoolDto()
+            {
+                SchoolName= school.Name,
+                SchoolCreated= school.Created,
+                Students = ParseToDto(school.Students)
+            };
+
+            return schoolDto;
         }
 
         public void Update(int id, string newName)
@@ -49,6 +76,24 @@ namespace SchoolApp.Services
         public void Remove(int id)
         {
             _schoolRepository.Remove(id);
+        }
+
+        private List<StudentDto> ParseToDto(List<Student> students)
+        {
+            List<StudentDto> studentDtos = new List<StudentDto>();
+
+            foreach(var student in students)
+            {
+                StudentDto studentDto = new StudentDto()
+                {
+                    StudentName = student.Name,
+                    Sex = student.Sex,
+                    SchoolId = student.SchoolId
+                };
+                studentDtos.Add(studentDto);
+            }
+
+            return studentDtos;
         }
     }
 }

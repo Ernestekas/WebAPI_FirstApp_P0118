@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SchoolApp.Dtos;
 using SchoolApp.Models;
 using SchoolApp.Services;
 using System;
@@ -21,13 +22,13 @@ namespace SchoolApp.Controllers
         }
 
         [HttpGet]
-        public List<School> GetAll()
+        public List<SchoolDto> GetAll()
         {
             return _schoolService.GetAll();
         }
 
         [HttpGet("{id}")]
-        public School GetById(int id)
+        public SchoolDto GetById(int id)
         {
             return _schoolService.GetById(id);
         }
