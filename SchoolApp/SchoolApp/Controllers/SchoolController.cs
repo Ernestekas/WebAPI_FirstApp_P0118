@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SchoolApp.Dtos.School;
 using SchoolApp.Models;
 using SchoolApp.Services;
 using System;
@@ -20,17 +21,34 @@ namespace SchoolApp.Controllers
             _schoolService = schoolService;
         }
 
-        [HttpGet("test")]
-        public School Get()
+        [HttpGet]
+        public List<School> GetAll()
         {
-            School test = new School()
-            {
-                Id = 1,
-                Name = "Dziundzikas Bumbikas",
-                Created = DateTime.Now
-            };
+            return _schoolService.GetAll();
+        }
 
-            return test;
+        [HttpGet("{id}")]
+        public School GetById(int id)
+        {
+            return _schoolService.GetById(id);
+        }
+
+        [HttpPost]
+        public void Add([FromBody] string name)
+        {
+            _schoolService.Create(name);
+        }
+
+        [HttpPut("{id}")]
+        public void Update(int id, [FromBody] string newName)
+        {
+            _schoolService.Update(id, newName);
+        }
+
+        [HttpDelete("{id}")]
+        public void Delete(int id)
+        {
+            _schoolService.Remove(id);
         }
     }
 }

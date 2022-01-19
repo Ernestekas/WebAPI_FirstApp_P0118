@@ -9,6 +9,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SchoolApp.Data;
+using SchoolApp.Repositories;
+using SchoolApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +35,12 @@ namespace SchoolApp
 
             var defaultConnection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<DataContext>(d => d.UseSqlServer(defaultConnection));
+
+            services.AddTransient<SchoolService>();
+            services.AddTransient<SchoolRepository>();
+
+            services.AddTransient<StudentService>();
+            services.AddTransient<StudentRepository>();
 
             services.AddSwaggerGen(c =>
             {
