@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SchoolApp.Dtos.School;
 using SchoolApp.Models;
 using SchoolApp.Services;
 using System;
