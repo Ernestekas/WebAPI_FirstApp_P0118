@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SchoolApp.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,11 @@ namespace SchoolApp.Services
 {
     public class SchoolService
     {
-        
+        private SchoolRepository _schoolRepository;
+
+        public SchoolService(SchoolRepository schoolRepository)
+        {
+            _schoolRepository = schoolRepository;
+        }
     }
 }
