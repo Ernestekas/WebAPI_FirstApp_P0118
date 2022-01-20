@@ -44,7 +44,7 @@ namespace SchoolApp.Controllers
 
                 int studentId = _studentService.Create(newStudent);
 
-                return Ok($"~/Student/{studentId}");
+                return Created($"~/Student/{studentId}", _studentService.GetById(studentId));
             }
             catch (Exception ex)
             {
