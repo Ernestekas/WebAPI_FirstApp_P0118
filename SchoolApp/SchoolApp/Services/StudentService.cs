@@ -13,12 +13,14 @@ namespace SchoolApp.Services
     {
         private StudentRepository _studentRepository;
         private SchoolService _schoolService;
+        private SchoolRepository _schoolRepository;
         private SexRepository _sexRepository;
 
-        public StudentService(StudentRepository studentRepository, SchoolService schoolService, SexRepository sexRepository)
+        public StudentService(StudentRepository studentRepository, SchoolService schoolService, SchoolRepository schoolRepository, SexRepository sexRepository)
         {
             _studentRepository = studentRepository;
             _schoolService = schoolService;
+            _schoolRepository = schoolRepository;
             _sexRepository = sexRepository;
         }
 
@@ -58,8 +60,8 @@ namespace SchoolApp.Services
                 StudentDto studentDto = new StudentDto()
                 {
                     StudentName = student.Name,
-                    SexName = _sexRepository.GetById(student.Sex.Id).Name,
-                    SchoolId=student.SchoolId
+                    SexName = _sexRepository.GetById(student.SexId).Name,
+                    SchoolName = _schoolRepository.GetById(student.SchoolId).Name
                 };
                 studentDtos.Add(studentDto);
             }
@@ -77,7 +79,7 @@ namespace SchoolApp.Services
             {
                 StudentName = student.Name,
                 SexName = _sexRepository.GetById(student.SexId).Name,
-                SchoolId = student.SchoolId
+                SchoolName = _schoolService.GetById(student.SchoolId).SchoolName
             };
         }
 

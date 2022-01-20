@@ -104,7 +104,7 @@ namespace SchoolApp.Services
                 {
                     StudentName = student.Name,
                     SexName = _sexRepository.GetById(student.SexId).Name,
-                    SchoolId = student.SchoolId
+                    SchoolName = _schoolRepository.GetById(student.SchoolId).Name
                 };
                 studentDtos.Add(studentDto);
             }
