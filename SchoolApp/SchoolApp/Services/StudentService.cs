@@ -13,11 +13,13 @@ namespace SchoolApp.Services
     {
         private StudentRepository _studentRepository;
         private SchoolService _schoolService;
+        private SexRepository _sexRepository;
 
-        public StudentService(StudentRepository studentRepository, SchoolService schoolService)
+        public StudentService(StudentRepository studentRepository, SchoolService schoolService, SexRepository sexRepository)
         {
             _studentRepository = studentRepository;
             _schoolService = schoolService;
+            _sexRepository = sexRepository;
         }
 
         public int Create(StudentDto newStudent)
@@ -25,7 +27,7 @@ namespace SchoolApp.Services
             Student student = new Student()
             {
                 Name = newStudent.StudentName,
-                Sex = newStudent.Sex,
+                SexId = GetSexId(newStudent.SexId),
                 SchoolId = newStudent.SchoolId
             };
 
@@ -56,7 +58,7 @@ namespace SchoolApp.Services
                 StudentDto studentDto = new StudentDto()
                 {
                     StudentName = student.Name,
-                    Sex = student.Sex,
+                    SexName = _sexRepository.GetById(student.Sex.Id).Name,
                     SchoolId=student.SchoolId
                 };
                 studentDtos.Add(studentDto);
@@ -74,7 +76,7 @@ namespace SchoolApp.Services
             return new StudentDto()
             {
                 StudentName = student.Name,
-                Sex = student.Sex,
+                SexName = _sexRepository.GetById(student.SexId).Name,
                 SchoolId = student.SchoolId
             };
         }
@@ -93,6 +95,19 @@ namespace SchoolApp.Services
             if(student == null)
             {
                 throw new Exception(errorMessage);
+            }
+        }
+
+        private int GetSexId(int inputSexId)
+        {
+            Sex sex = _sexRepository.GetById(inputSexId);
+            if(sex == null)
+            {
+                return 3;
+            }
+            else
+            {
+                return sex.Id;
             }
         }
     }

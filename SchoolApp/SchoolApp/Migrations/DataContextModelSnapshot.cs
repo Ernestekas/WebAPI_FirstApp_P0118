@@ -30,11 +30,28 @@ namespace SchoolApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Schools");
+                });
+
+            modelBuilder.Entity("SchoolApp.Models.Sex", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sexes");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.Student", b =>
@@ -45,17 +62,20 @@ namespace SchoolApp.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SchoolId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Sex")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("SexId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("SchoolId");
+
+                    b.HasIndex("SexId");
 
                     b.ToTable("Students");
                 });
@@ -68,7 +88,15 @@ namespace SchoolApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SchoolApp.Models.Sex", "Sex")
+                        .WithMany()
+                        .HasForeignKey("SexId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("School");
+
+                    b.Navigation("Sex");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.School", b =>

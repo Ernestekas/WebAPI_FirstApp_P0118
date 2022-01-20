@@ -42,6 +42,8 @@ namespace SchoolApp
             services.AddTransient<StudentService>();
             services.AddTransient<StudentRepository>();
 
+            services.AddTransient<SexRepository>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SchoolApp", Version = "v1" });

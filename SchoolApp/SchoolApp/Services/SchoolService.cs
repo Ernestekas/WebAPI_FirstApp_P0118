@@ -13,11 +13,13 @@ namespace SchoolApp.Services
     {
         private SchoolRepository _schoolRepository;
         private StudentRepository _studentRepository;
+        private SexRepository _sexRepository;
 
-        public SchoolService(SchoolRepository schoolRepository, StudentRepository studentRepository)
+        public SchoolService(SchoolRepository schoolRepository, StudentRepository studentRepository, SexRepository sexRepository)
         {
             _schoolRepository = schoolRepository;
             _studentRepository = studentRepository;
+            _sexRepository = sexRepository;
         }
 
         public int Create(string name)
@@ -101,7 +103,7 @@ namespace SchoolApp.Services
                 StudentDto studentDto = new StudentDto()
                 {
                     StudentName = student.Name,
-                    Sex = student.Sex,
+                    SexName = _sexRepository.GetById(student.SexId).Name,
                     SchoolId = student.SchoolId
                 };
                 studentDtos.Add(studentDto);
